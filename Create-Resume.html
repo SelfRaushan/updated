@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create Your Resume - Fill out the form to create your resume.">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <title>Create Your Resume</title>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/projects">Projects</a></li>
+                <li><a href="/blog">Blog</a></li>
+                <li><a href="/resume">Resume</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/create-resume">Create Resume</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="create-resume">
+        <h1>Create Your Resume</h1>
+        <form id="resume-form">
+            <label for="image">Profile Image</label>
+            <input type="file" id="image" name="image" accept="image/*">
+
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="education">Education</label>
+            <input type="text" id="education" name="education" required>
+
+            <label for="skills">Skills</label>
+            <textarea id="skills" name="skills" required></textarea>
+
+            <label for="hobbies">Hobbies</label>
+            <textarea id="hobbies" name="hobbies"></textarea>
+
+            <div id="projects-container">
+                <h2>Projects</h2>
+                <!-- First Project Section (Default) -->
+                <div class="project-section" id="project1">
+                    <label for="project-name1">Project Name</label>
+                    <input type="text" id="project-name1" name="project-name1" required>
+
+                    <label for="project-description1">Project Description</label>
+                    <textarea id="project-description1" name="project-description1" required></textarea>
+
+                    <label for="your-role1">Your Role</label>
+                    <input type="text" id="your-role1" name="your-role1" required>
+
+                    <label for="project-modules1">Number of Modules</label>
+                    <input type="number" id="project-modules1" name="project-modules1" required>
+
+                    <label for="members-count1">Number of Members</label>
+                    <input type="number" id="members-count1" name="members-count1" required>
+
+                    <label for="project-members1">Project Members (comma separated)</label>
+                    <input type="text" id="project-members1" name="project-members1" required>
+                </div>
+            </div>
+
+            <button type="button" id="add-project-btn">Add More Projects</button>
+            <button type="button" id="generate-resume-btn">Generate Resume</button>
+        </form>
+        
+        <!-- Preview Section for Resume -->
+        <section id="resume-preview" style="display:none;">
+            <h2>Preview Your Resume</h2>
+            <div id="preview-content"></div>
+            <button type="button" id="download-btn">Download Resume</button>
+        </section>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Raushan Kumar. All rights reserved.</p>
+    </footer>
+
+    <!-- Include JavaScript Files -->
+    <script src="js/Validation.js"></script>
+    <script src="js/Modal.js"></script>
+    <script src="js/Script.js"></script>
+    <script src="js/ThemeToggle.js"></script>
+
+    <!-- Add jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <script>
+        // Counter for project sections
+        let projectCount = 1;
+
+        // Add More Projects functionality
+        document.getElementById('add-project-btn').addEventListener('click', function() {
+            projectCount++;
+
+            // Create a new project section
+            const newProjectSection = document.createElement('div');
+            newProjectSection.classList.add('project-section');
+            newProjectSection.id = `project${projectCount}`;
+
+            newProjectSection.innerHTML = `
+                <label for="project-name${projectCount}">Project Name</label>
+                <input type="text" id="project-name${projectCount}" name="project-name${projectCount}" required>
+
+                <label for="project-description${projectCount}">Project Description</label>
+                <textarea id="project-description${projectCount}" name="project-description${projectCount}" required></textarea>
+
+                <label for="your-role${projectCount}">Your Role</label>
+                <input type="text" id="your-role${projectCount}" name="your-role${projectCount}" required>
+
+                <label for="project-modules${projectCount}">Number of Modules</label>
+                <input type="number" id="project-modules${projectCount}" name="project-modules${projectCount}" required>
+
+                <label for="members-count${projectCount}">Number of Members</label>
+                <input type="number" id="members-count${projectCount}" name="members-count${projectCount}" required>
+
+                <label for="project-members${projectCount}">Project Members (comma separated)</label>
+                <input type="text" id="project-members${projectCount}" name="project-members${projectCount}" required>
+            `;
+
+            // Append the new project section to the projects container
+            document.getElementById('projects-container').appendChild(newProjectSection);
+        });
+
+        // Generate Resume functionality
+        document.getElementById('generate-resume-btn').addEventListener('click', function() {
+            let resumeContent = `
+                <div>
+                    <h3>${document.getElementById('name').value}</h3>
+                    <p>Email: ${document.getElementById('email').value}</p>
+                    <p>Education: ${document.getElementById('education').value}</p>
+                    <p>Skills: ${document.getElementById('skills').value}</p>
+                    <p>Hobbies: ${document.getElementById('hobbies').value}</p>
+                    <h4>Projects:</h4>
+            `;
+
+            // Loop through all the project sections and add them to the resume
+            for (let i = 1; i <= projectCount; i++) {
+                resumeContent += `
+                    <div id="project${i}-preview">
+                        <p>Project Name: ${document.getElementById('project-name' + i).value}</p>
+                        <p>Project Description: ${document.getElementById('project-description' + i).value}</p>
+                        <p>Your Role: ${document.getElementById('your-role' + i).value}</p>
+                        <p>Modules: ${document.getElementById('project-modules' + i).value}</p>
+                        <p>Members Count: ${document.getElementById('members-count' + i).value}</p>
+                        <p>Project Members: ${document.getElementById('project-members' + i).value}</p>
+                    </div>
+                `;
+            }
+
+            // Close the div and show the resume preview
+            resumeContent += `</div>`;
+            document.getElementById('preview-content').innerHTML = resumeContent;
+            document.getElementById('resume-preview').style.display = 'block';
+        });
+
+        // Download Resume functionality
+        document.getElementById('download-btn').addEventListener('click', function() {
+            var doc = new jsPDF();
+
+            // Getting the resume preview content
+            var resumeHtml = document.getElementById('preview-content').innerHTML;
+
+            // Adding the HTML content to the PDF
+            doc.html(resumeHtml, {
+                callback: function (doc) {
+                    // Save the PDF when it's ready
+                    doc.save('resume.pdf');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
