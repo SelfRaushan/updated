@@ -1,0 +1,11 @@
+# Allow all crawlers to access the entire site
+User-agent: *
+Disallow:
+
+# Block specific folders or pages (optional)
+# For example, if you want to block crawlers from accessing certain pages:
+# Disallow: /private/
+# Disallow: /contact.html
+
+# Sitemap location (optional)
+Sitemap: https://www.yourportfolio.com/sitemap.xml
